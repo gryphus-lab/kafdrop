@@ -58,6 +58,6 @@ jobs:
         generateReleaseNotes: true
 
     -
-      name: push latest if it's a release
-      if: ${{ ! endsWith( env.app_ver, '-SNAPSHOT' ) }}
-      run: docker buildx imagetools create docker.io/obsidiandynamics/kafdrop:$app_ver --tag docker.io/obsidiandynamics/kafdrop:latest
+#      name: push latest if it's a release
+#      if: ${{ ! endsWith( env.app_ver, '-SNAPSHOT' ) }}
+#      run: docker buildx imagetools create docker.io/obsidiandynamics/kafdrop:$app_ver --tag docker.io/obsidiandynamics/kafdrop:latest
