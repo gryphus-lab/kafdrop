@@ -24,7 +24,7 @@
         <testcontainers.version>1.21.3</testcontainers.version>
         <kafka-libs.version>7.9.4</kafka-libs.version>
         <docker.platforms>linux/amd64,linux/arm64</docker.platforms>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
     </properties>
 
     <scm>
