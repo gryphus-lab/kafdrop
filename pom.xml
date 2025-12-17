@@ -21,7 +21,7 @@
         <additionalOptions>-Xdoclint:none</additionalOptions>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <protobuf.version>4.33.1</protobuf.version>
-        <testcontainers.version>1.21.3</testcontainers.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <kafka-libs.version>7.9.4</kafka-libs.version>
         <docker.platforms>linux/amd64,linux/arm64</docker.platforms>
         <commons-lang3.version>3.18.0</commons-lang3.version>
