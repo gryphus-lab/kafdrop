@@ -44,13 +44,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>bintray-obsidiandynamics-kafdrop</id>
-      <name>obsidiandynamics-kafdrop</name>
-      <url>https://api.bintray.com/maven/obsidiandynamics/kafdrop/main/;publish=1</url>
-    </repository>
-  </distributionManagement>
 
   <repositories>
     <repository>
