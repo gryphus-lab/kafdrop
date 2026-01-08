@@ -110,7 +110,7 @@ public final class KafkaHighLevelAdminClient {
   Map<String, Config> describeTopicConfigs(Set<String> topicNames) {
     final var resources = topicNames.stream()
       .map(topic -> new ConfigResource(Type.TOPIC, topic))
-      .collect(Collectors.toList());
+      .toList();
     final var result = adminClient.describeConfigs(resources);
     final Map<String, Config> configsByTopic;
     try {
@@ -160,7 +160,9 @@ public final class KafkaHighLevelAdminClient {
     final var deleteTopicsResult = adminClient.deleteTopics(List.of(topic), options);
     try {
       deleteTopicsResult.all().get();
-      LOG.info("Topic {} successfully deleted", topic);
+      if (LOG.isInfoEnabled()) {
+        LOG.info("Topic {} successfully deleted", topic);
+      }
     } catch (InterruptedException | ExecutionException e) {
       LOG.error("Error while deleting topic", e);
       throw new KafkaAdminClientException(e);
