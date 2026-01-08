@@ -3,6 +3,9 @@
 
 name: Release with mvn
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ master ] 
