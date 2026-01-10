@@ -1,10 +1,9 @@
 package kafdrop.service;
 
-import java.util.Properties;
-import java.util.concurrent.Future;
-
-
 import jakarta.annotation.PostConstruct;
+import kafdrop.config.KafkaConfiguration;
+import kafdrop.model.CreateMessageVO;
+import kafdrop.util.Serializers;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -14,9 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import kafdrop.config.KafkaConfiguration;
-import kafdrop.model.CreateMessageVO;
-import kafdrop.util.Serializers;
+import java.util.Properties;
+import java.util.concurrent.Future;
 
 @Service
 public final class KafkaHighLevelProducer {
@@ -49,8 +47,8 @@ public final class KafkaHighLevelProducer {
     initializeClient();
 
     final ProducerRecord<byte[], byte[]> record = new ProducerRecord<byte[], byte[]>(message.getTopic(),
-      message.getTopicPartition(), serializers.getKeySerializer().serializeMessage(message.getKey()),
-      serializers.getValueSerializer().serializeMessage(message.getValue()));
+      message.getTopicPartition(), serializers.keySerializer().serializeMessage(message.getKey()),
+      serializers.valueSerializer().serializeMessage(message.getValue()));
 
     Future<RecordMetadata> result = kafkaProducer.send(record);
     try {

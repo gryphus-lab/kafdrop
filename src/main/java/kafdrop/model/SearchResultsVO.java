@@ -29,15 +29,15 @@ public final class SearchResultsVO {
     return messages;
   }
 
+  public void setMessages(List<MessageVO> messages) {
+    this.messages = messages;
+  }
+
   public String getCompletionDetails() {
     return completionDetails;
   }
 
   public void setCompletionDetails(String completionDetails) {
     this.completionDetails = completionDetails;
-  }
-
-  public void setMessages(List<MessageVO> messages) {
-    this.messages = messages;
   }
 }

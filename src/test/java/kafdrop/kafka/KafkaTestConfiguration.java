@@ -20,10 +20,9 @@ import java.util.Map;
 @TestConfiguration
 public class KafkaTestConfiguration {
 
+  public static final String TEST_TOPIC_NAME = "kafdrop-test";
   @Value("${kafka.brokerConnect}")
   private String brokerConnect;
-
-  public static final String TEST_TOPIC_NAME = "kafdrop-test";
 
   @Bean
   public ProducerFactory<String, byte[]> producerFactory() {

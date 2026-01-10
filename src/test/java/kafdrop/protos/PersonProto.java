@@ -4,31 +4,12 @@
 package kafdrop.protos;
 
 public final class PersonProto {
-  private PersonProto() {
-  }
-
-  public static void registerAllExtensions(
-    com.google.protobuf.ExtensionRegistryLite registry) {
-  }
-
-  public static void registerAllExtensions(
-    com.google.protobuf.ExtensionRegistry registry) {
-    registerAllExtensions(
-      (com.google.protobuf.ExtensionRegistryLite) registry);
-  }
-
   static final com.google.protobuf.Descriptors.Descriptor
     internal_static_kafdrop_Person_descriptor;
   static final
   com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
     internal_static_kafdrop_Person_fieldAccessorTable;
-
-  public static com.google.protobuf.Descriptors.FileDescriptor
-  getDescriptor() {
-    return descriptor;
-  }
-
-  private static com.google.protobuf.Descriptors.FileDescriptor
+  private static final com.google.protobuf.Descriptors.FileDescriptor
     descriptor;
 
   static {
@@ -50,6 +31,23 @@ public final class PersonProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
       internal_static_kafdrop_Person_descriptor,
       new java.lang.String[]{"Name", "Id", "Email", "Contact", "Data",});
+  }
+  private PersonProto() {
+  }
+
+  public static void registerAllExtensions(
+    com.google.protobuf.ExtensionRegistryLite registry) {
+  }
+
+  public static void registerAllExtensions(
+    com.google.protobuf.ExtensionRegistry registry) {
+    registerAllExtensions(
+      (com.google.protobuf.ExtensionRegistryLite) registry);
+  }
+
+  public static com.google.protobuf.Descriptors.FileDescriptor
+  getDescriptor() {
+    return descriptor;
   }
 
   // @@protoc_insertion_point(outer_class_scope)
