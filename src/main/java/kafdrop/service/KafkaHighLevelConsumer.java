@@ -44,13 +44,24 @@ public final class KafkaHighLevelConsumer {
   private static final int SEARCH_POLL_TIMEOUT_MS = 1000;
   private static final int SEARCH_MAX_MESSAGES_TO_SCAN = 100000;
   private static final Logger LOG = LoggerFactory.getLogger(KafkaHighLevelConsumer.class);
-
-  private KafkaConsumer<byte[], byte[]> kafkaConsumer;
-
   private final KafkaConfiguration kafkaConfiguration;
+  private KafkaConsumer<byte[], byte[]> kafkaConsumer;
 
   public KafkaHighLevelConsumer(KafkaConfiguration kafkaConfiguration) {
     this.kafkaConfiguration = kafkaConfiguration;
+  }
+
+  @NotNull
+  private static ConsumerRecord<String, String> createConsumerRecord(ConsumerRecord<byte[], byte[]> rec,
+                                                                     Deserializers deserializers) {
+    return new ConsumerRecord<>(rec.topic(), rec.partition(), rec.offset(), rec.timestamp(), rec.timestampType(),
+      rec.serializedKeySize(), rec.serializedValueSize(), deserialize(deserializers.keyDeserializer(), rec.key()),
+      deserialize(deserializers.valueDeserializer(), rec.value()), rec.headers(),
+      rec.leaderEpoch());
+  }
+
+  private static String deserialize(MessageDeserializer deserializer, byte[] bytes) {
+    return bytes != null ? deserializer.deserializeMessage(ByteBuffer.wrap(bytes)) : "empty";
   }
 
   @PostConstruct
@@ -295,27 +306,14 @@ public final class KafkaHighLevelConsumer {
       // Add to found records if it matches the search criteria
       foundRecords.addAll(records.stream()
         .filter(rec ->
-          containsValue(deserializers.getKeyDeserializer(), rec.key(), loweredSearchString) ||
-            containsValue(deserializers.getValueDeserializer(), rec.value(), loweredSearchString) ||
+          containsValue(deserializers.keyDeserializer(), rec.key(), loweredSearchString) ||
+            containsValue(deserializers.valueDeserializer(), rec.value(), loweredSearchString) ||
             StreamSupport.stream(rec.headers().spliterator(), false)
               .anyMatch(h -> containsValue(headerDeserializer, h.value(), loweredSearchString)))
         .map(rec -> createConsumerRecord(rec, deserializers))
         .toList());
     }
     return scanStatus;
-  }
-
-  private record ScanStatus(long endingTimestamp, int scannedCount) {
-    public static ScanStatus createInstance(ScanStatus previousScanStatus,
-                                            long firstTimestampOfBLock,
-                                            int sizeOfBlock) {
-      // Keep track of the lowest timestamp among this batch of records.
-      // This is what we will report to the user in the event that the search terminates
-      // early, so that they can perform a new search with this new timestamp as a starting point
-      return new ScanStatus((firstTimestampOfBLock < previousScanStatus.endingTimestamp) ?
-        firstTimestampOfBLock :
-        previousScanStatus.endingTimestamp(), previousScanStatus.scannedCount() + sizeOfBlock);
-    }
   }
 
   @NotNull
@@ -330,22 +328,8 @@ public final class KafkaHighLevelConsumer {
     kafkaConsumer.seek(partition, (offset == null) ? 0 : offset.offset());
   }
 
-  @NotNull
-  private static ConsumerRecord<String, String> createConsumerRecord(ConsumerRecord<byte[], byte[]> rec,
-                                                                     Deserializers deserializers) {
-    return new ConsumerRecord<>(rec.topic(), rec.partition(), rec.offset(), rec.timestamp(), rec.timestampType(),
-      rec.serializedKeySize(), rec.serializedValueSize(), deserialize(deserializers.getKeyDeserializer(), rec.key()),
-      deserialize(deserializers.getValueDeserializer(), rec.value()), rec.headers(),
-      rec.leaderEpoch());
-  }
-
   private boolean containsValue(MessageDeserializer deserializer, byte[] value, String loweredSearchString) {
     return deserialize(deserializer, value).toLowerCase().contains(loweredSearchString);
-  }
-
-
-  private static String deserialize(MessageDeserializer deserializer, byte[] bytes) {
-    return bytes != null ? deserializer.deserializeMessage(ByteBuffer.wrap(bytes)) : "empty";
   }
 
   synchronized Map<String, List<PartitionInfo>> getAllTopics() {
@@ -394,5 +378,18 @@ public final class KafkaHighLevelConsumer {
 
     topicVo.setPartitions(partitions);
     return topicVo;
+  }
+
+  private record ScanStatus(long endingTimestamp, int scannedCount) {
+    public static ScanStatus createInstance(ScanStatus previousScanStatus,
+                                            long firstTimestampOfBLock,
+                                            int sizeOfBlock) {
+      // Keep track of the lowest timestamp among this batch of records.
+      // This is what we will report to the user in the event that the search terminates
+      // early, so that they can perform a new search with this new timestamp as a starting point
+      return new ScanStatus((firstTimestampOfBLock < previousScanStatus.endingTimestamp) ?
+        firstTimestampOfBLock :
+        previousScanStatus.endingTimestamp(), previousScanStatus.scannedCount() + sizeOfBlock);
+    }
   }
 }

@@ -59,8 +59,7 @@ public final class ConsumerVO implements Comparable<ConsumerVO> {
   public boolean equals(Object o) {
     if (this == o) {
       return true;
-    } else if (o instanceof ConsumerVO) {
-      final var that = (ConsumerVO) o;
+    } else if (o instanceof ConsumerVO that) {
       return Objects.equals(groupId, that.groupId);
     } else {
       return false;

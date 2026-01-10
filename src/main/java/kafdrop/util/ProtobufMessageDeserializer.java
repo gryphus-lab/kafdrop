@@ -25,11 +25,10 @@ import java.util.stream.Collectors;
 
 public class ProtobufMessageDeserializer implements MessageDeserializer {
 
+  private static final Logger LOG = LoggerFactory.getLogger(ProtobufMessageDeserializer.class);
   private final String fullDescFile;
   private final String msgTypeName;
   private final boolean isAnyProto;
-
-  private static final Logger LOG = LoggerFactory.getLogger(ProtobufMessageDeserializer.class);
 
   public ProtobufMessageDeserializer(String fullDescFile, String msgTypeName, boolean isAnyProto) {
     this.fullDescFile = fullDescFile;

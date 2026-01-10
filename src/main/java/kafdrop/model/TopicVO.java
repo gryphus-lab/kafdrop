@@ -115,8 +115,7 @@ public final class TopicVO implements Comparable<TopicVO> {
   public boolean equals(Object o) {
     if (this == o) {
       return true;
-    } else if (o instanceof TopicVO) {
-      final var that = (TopicVO) o;
+    } else if (o instanceof TopicVO that) {
       return Objects.equals(name, that.name);
     } else {
       return false;

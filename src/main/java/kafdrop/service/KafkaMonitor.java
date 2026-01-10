@@ -29,9 +29,8 @@ import kafdrop.model.SearchResultsVO;
 import kafdrop.model.TopicVO;
 import kafdrop.util.Deserializers;
 import kafdrop.util.Serializers;
-import org.apache.kafka.common.TopicPartition;
-
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.TopicPartition;
 
 import java.util.Collection;
 import java.util.Date;

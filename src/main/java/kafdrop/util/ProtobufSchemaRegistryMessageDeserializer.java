@@ -17,13 +17,6 @@ public class ProtobufSchemaRegistryMessageDeserializer implements MessageDeseria
     this.deserializer = getDeserializer(schemaRegistryUrl, schemaRegistryAuth);
   }
 
-  @Override
-  public String deserializeMessage(ByteBuffer buffer) {
-    // Convert byte buffer to byte array
-    final var bytes = ByteUtils.convertToByteArray(buffer);
-    return deserializer.deserialize(topicName, bytes).toString();
-  }
-
   private static KafkaProtobufDeserializer getDeserializer(String schemaRegistryUrl, String schemaRegistryAuth) {
     final var config = new HashMap<String, Object>();
     config.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
@@ -34,5 +27,12 @@ public class ProtobufSchemaRegistryMessageDeserializer implements MessageDeseria
     final var kafkaAvroDeserializer = new KafkaProtobufDeserializer<>();
     kafkaAvroDeserializer.configure(config, false);
     return kafkaAvroDeserializer;
+  }
+
+  @Override
+  public String deserializeMessage(ByteBuffer buffer) {
+    // Convert byte buffer to byte array
+    final var bytes = ByteUtils.convertToByteArray(buffer);
+    return deserializer.deserialize(topicName, bytes).toString();
   }
 }

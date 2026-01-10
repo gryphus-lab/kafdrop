@@ -76,6 +76,62 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
     this.highLevelProducer = highLevelProducer;
   }
 
+  private static Map<String, String> headersToMap(Headers headers) {
+    final var map = new TreeMap<String, String>();
+    for (var header : headers) {
+      final var value = header.value();
+      map.put(header.key(), (value == null) ? null : new String(value));
+    }
+    return map;
+  }
+
+  private static List<ConsumerVO> convert(List<ConsumerGroupOffsets> consumerGroupOffsets,
+                                          Collection<TopicVO> topicVos) {
+    final var topicVoMap = topicVos.stream().collect(Collectors.toMap(TopicVO::getName, Function.identity()));
+    final var groupTopicPartitionOffsetMap = new TreeMap<String, Map<String, Map<Integer, Long>>>();
+
+    for (var consumerGroupOffset : consumerGroupOffsets) {
+      final var groupId = consumerGroupOffset.groupId;
+
+      for (var topicPartitionOffset : consumerGroupOffset.offsets.entrySet()) {
+        final var topic = topicPartitionOffset.getKey().topic();
+        final var partition = topicPartitionOffset.getKey().partition();
+        final var offset = topicPartitionOffset.getValue().offset();
+        groupTopicPartitionOffsetMap
+          .computeIfAbsent(groupId, unused -> new TreeMap<>())
+          .computeIfAbsent(topic, unused -> new TreeMap<>())
+          .put(partition, offset);
+      }
+    }
+
+    final var consumerVos = new ArrayList<ConsumerVO>(consumerGroupOffsets.size());
+    for (var groupTopicPartitionOffset : groupTopicPartitionOffsetMap.entrySet()) {
+      final var groupId = groupTopicPartitionOffset.getKey();
+      final var consumerVo = new ConsumerVO(groupId);
+      consumerVos.add(consumerVo);
+
+      for (var topicPartitionOffset : groupTopicPartitionOffset.getValue().entrySet()) {
+        final var topic = topicPartitionOffset.getKey();
+        final var consumerTopicVo = new ConsumerTopicVO(topic);
+        consumerVo.addTopic(consumerTopicVo);
+
+        for (var partitionOffset : topicPartitionOffset.getValue().entrySet()) {
+          final var partition = partitionOffset.getKey();
+          final var offset = partitionOffset.getValue();
+          final var offsetVo = new ConsumerPartitionVO(groupId, topic, partition);
+          consumerTopicVo.addOffset(offsetVo);
+          offsetVo.setOffset(offset);
+          final var topicVo = topicVoMap.get(topic);
+          final var topicPartitionVo = topicVo.getPartition(partition);
+          offsetVo.setSize(topicPartitionVo.map(TopicPartitionVO::getSize).orElse(-1L));
+          offsetVo.setFirstOffset(topicPartitionVo.map(TopicPartitionVO::getFirstOffset).orElse(-1L));
+        }
+      }
+    }
+
+    return consumerVos;
+  }
+
   @Override
   public List<BrokerVO> getBrokers() {
     final var clusterDescription = highLevelAdminClient.describeCluster();
@@ -89,7 +145,7 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   @Override
   public Optional<BrokerVO> getBroker(int id) {
-    return getBrokers().stream().filter(brokerVo -> brokerVo.getId() == id).findAny();
+    return getBrokers().stream().filter(brokerVo -> brokerVo.id() == id).findAny();
   }
 
   @Override
@@ -216,15 +272,6 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
     }
   }
 
-  private static Map<String, String> headersToMap(Headers headers) {
-    final var map = new TreeMap<String, String>();
-    for (var header : headers) {
-      final var value = header.value();
-      map.put(header.key(), (value == null) ? null : new String(value));
-    }
-    return map;
-  }
-
   private void setTopicPartitionSizes(List<TopicVO> topics) {
     highLevelConsumer.setTopicPartitionSizes(topics);
   }
@@ -336,80 +383,6 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
     return aclVos;
   }
 
-  private static List<ConsumerVO> convert(List<ConsumerGroupOffsets> consumerGroupOffsets,
-                                          Collection<TopicVO> topicVos) {
-    final var topicVoMap = topicVos.stream().collect(Collectors.toMap(TopicVO::getName, Function.identity()));
-    final var groupTopicPartitionOffsetMap = new TreeMap<String, Map<String, Map<Integer, Long>>>();
-
-    for (var consumerGroupOffset : consumerGroupOffsets) {
-      final var groupId = consumerGroupOffset.groupId;
-
-      for (var topicPartitionOffset : consumerGroupOffset.offsets.entrySet()) {
-        final var topic = topicPartitionOffset.getKey().topic();
-        final var partition = topicPartitionOffset.getKey().partition();
-        final var offset = topicPartitionOffset.getValue().offset();
-        groupTopicPartitionOffsetMap
-          .computeIfAbsent(groupId, unused -> new TreeMap<>())
-          .computeIfAbsent(topic, unused -> new TreeMap<>())
-          .put(partition, offset);
-      }
-    }
-
-    final var consumerVos = new ArrayList<ConsumerVO>(consumerGroupOffsets.size());
-    for (var groupTopicPartitionOffset : groupTopicPartitionOffsetMap.entrySet()) {
-      final var groupId = groupTopicPartitionOffset.getKey();
-      final var consumerVo = new ConsumerVO(groupId);
-      consumerVos.add(consumerVo);
-
-      for (var topicPartitionOffset : groupTopicPartitionOffset.getValue().entrySet()) {
-        final var topic = topicPartitionOffset.getKey();
-        final var consumerTopicVo = new ConsumerTopicVO(topic);
-        consumerVo.addTopic(consumerTopicVo);
-
-        for (var partitionOffset : topicPartitionOffset.getValue().entrySet()) {
-          final var partition = partitionOffset.getKey();
-          final var offset = partitionOffset.getValue();
-          final var offsetVo = new ConsumerPartitionVO(groupId, topic, partition);
-          consumerTopicVo.addOffset(offsetVo);
-          offsetVo.setOffset(offset);
-          final var topicVo = topicVoMap.get(topic);
-          final var topicPartitionVo = topicVo.getPartition(partition);
-          offsetVo.setSize(topicPartitionVo.map(TopicPartitionVO::getSize).orElse(-1L));
-          offsetVo.setFirstOffset(topicPartitionVo.map(TopicPartitionVO::getFirstOffset).orElse(-1L));
-        }
-      }
-    }
-
-    return consumerVos;
-  }
-
-  private static final class ConsumerGroupOffsets {
-    final String groupId;
-    final Map<TopicPartition, OffsetAndMetadata> offsets;
-
-    ConsumerGroupOffsets(String groupId, Map<TopicPartition, OffsetAndMetadata> offsets) {
-      this.groupId = groupId;
-      this.offsets = offsets;
-    }
-
-    boolean isEmpty() {
-      return offsets.isEmpty();
-    }
-
-    ConsumerGroupOffsets forTopics(Set<String> topics) {
-      final var filteredOffsets = offsets.entrySet().stream()
-        .filter(e -> e.getValue() != null)
-        .filter(e -> topics.contains(e.getKey().topic()))
-        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-      return new ConsumerGroupOffsets(groupId, filteredOffsets);
-    }
-
-    @Override
-    public String toString() {
-      return ConsumerGroupOffsets.class.getSimpleName() + " [groupId=" + groupId + ", offsets=" + offsets + "]";
-    }
-  }
-
   private ConsumerGroupOffsets resolveOffsets(String groupId) {
     return new ConsumerGroupOffsets(groupId, highLevelAdminClient.listConsumerGroupOffsetsIfAuthorized(groupId));
   }
@@ -431,4 +404,24 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
   public RecordMetadata publishMessage(CreateMessageVO message, Serializers serializers) {
     return highLevelProducer.publishMessage(message, serializers);
   }
+
+  private record ConsumerGroupOffsets(String groupId, Map<TopicPartition, OffsetAndMetadata> offsets) {
+
+    boolean isEmpty() {
+        return offsets.isEmpty();
+      }
+
+      ConsumerGroupOffsets forTopics(Set<String> topics) {
+        final var filteredOffsets = offsets.entrySet().stream()
+          .filter(e -> e.getValue() != null)
+          .filter(e -> topics.contains(e.getKey().topic()))
+          .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        return new ConsumerGroupOffsets(groupId, filteredOffsets);
+      }
+
+      @Override
+      public String toString() {
+        return ConsumerGroupOffsets.class.getSimpleName() + " [groupId=" + groupId + ", offsets=" + offsets + "]";
+      }
+    }
 }

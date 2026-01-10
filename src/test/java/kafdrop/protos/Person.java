@@ -10,7 +10,35 @@ public final class Person extends
   com.google.protobuf.GeneratedMessageV3 implements
   // @@protoc_insertion_point(message_implements:kafdrop.Person)
   PersonOrBuilder {
+  public static final int NAME_FIELD_NUMBER = 1;
+  public static final int ID_FIELD_NUMBER = 2;
+  public static final int EMAIL_FIELD_NUMBER = 3;
+  public static final int CONTACT_FIELD_NUMBER = 4;
+  public static final int DATA_FIELD_NUMBER = 5;
   private static final long serialVersionUID = 0L;
+  // @@protoc_insertion_point(class_scope:kafdrop.Person)
+  private static final kafdrop.protos.Person DEFAULT_INSTANCE;
+  private static final com.google.protobuf.Parser<Person>
+    PARSER = new com.google.protobuf.AbstractParser<Person>() {
+    @java.lang.Override
+    public Person parsePartialFrom(
+      com.google.protobuf.CodedInputStream input,
+      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+      throws com.google.protobuf.InvalidProtocolBufferException {
+      return new Person(input, extensionRegistry);
+    }
+  };
+
+  static {
+    DEFAULT_INSTANCE = new kafdrop.protos.Person();
+  }
+
+  private volatile java.lang.Object name_;
+  private int id_;
+  private volatile java.lang.Object email_;
+  private int contact_;
+  private com.google.protobuf.LazyStringList data_;
+  private byte memoizedIsInitialized = -1;
 
   // Use Person.newBuilder() to construct.
   private Person(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
@@ -23,20 +51,6 @@ public final class Person extends
     contact_ = 0;
     data_ = com.google.protobuf.LazyStringArrayList.EMPTY;
   }
-
-  @java.lang.Override
-  @SuppressWarnings({"unused"})
-  protected java.lang.Object newInstance(
-    UnusedPrivateParameter unused) {
-    return new Person();
-  }
-
-  @java.lang.Override
-  public final com.google.protobuf.UnknownFieldSet
-  getUnknownFields() {
-    return this.unknownFields;
-  }
-
   private Person(
     com.google.protobuf.CodedInputStream input,
     com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -81,7 +95,7 @@ public final class Person extends
           }
           case 42: {
             java.lang.String s = input.readStringRequireUtf8();
-            if (!((mutable_bitField0_ & 0x00000001) != 0)) {
+            if ((mutable_bitField0_ & 0x00000001) == 0) {
               data_ = new com.google.protobuf.LazyStringArrayList();
               mutable_bitField0_ |= 0x00000001;
             }
@@ -111,409 +125,9 @@ public final class Person extends
     }
   }
 
-  public static final com.google.protobuf.Descriptors.Descriptor
+  public static com.google.protobuf.Descriptors.Descriptor
   getDescriptor() {
     return kafdrop.protos.PersonProto.internal_static_kafdrop_Person_descriptor;
-  }
-
-  @java.lang.Override
-  protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-  internalGetFieldAccessorTable() {
-    return kafdrop.protos.PersonProto.internal_static_kafdrop_Person_fieldAccessorTable
-      .ensureFieldAccessorsInitialized(
-        kafdrop.protos.Person.class, kafdrop.protos.Person.Builder.class);
-  }
-
-  /**
-   * Protobuf enum {@code kafdrop.Person.Contact}
-   */
-  public enum Contact
-    implements com.google.protobuf.ProtocolMessageEnum {
-    /**
-     * <code>TELEPHONE = 0;</code>
-     */
-    TELEPHONE(0),
-    /**
-     * <code>MOBILE = 1;</code>
-     */
-    MOBILE(1),
-    UNRECOGNIZED(-1),
-    ;
-
-    /**
-     * <code>TELEPHONE = 0;</code>
-     */
-    public static final int TELEPHONE_VALUE = 0;
-    /**
-     * <code>MOBILE = 1;</code>
-     */
-    public static final int MOBILE_VALUE = 1;
-
-
-    public final int getNumber() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalArgumentException(
-          "Can't get the number of an unknown enum value.");
-      }
-      return value;
-    }
-
-    /**
-     * @param value The numeric wire value of the corresponding enum entry.
-     * @return The enum associated with the given numeric wire value.
-     * @deprecated Use {@link #forNumber(int)} instead.
-     */
-    @java.lang.Deprecated
-    public static Contact valueOf(int value) {
-      return forNumber(value);
-    }
-
-    /**
-     * @param value The numeric wire value of the corresponding enum entry.
-     * @return The enum associated with the given numeric wire value.
-     */
-    public static Contact forNumber(int value) {
-      switch (value) {
-        case 0:
-          return TELEPHONE;
-        case 1:
-          return MOBILE;
-        default:
-          return null;
-      }
-    }
-
-    public static com.google.protobuf.Internal.EnumLiteMap<Contact>
-    internalGetValueMap() {
-      return internalValueMap;
-    }
-
-    private static final com.google.protobuf.Internal.EnumLiteMap<
-      Contact> internalValueMap =
-      new com.google.protobuf.Internal.EnumLiteMap<Contact>() {
-        public Contact findValueByNumber(int number) {
-          return Contact.forNumber(number);
-        }
-      };
-
-    public final com.google.protobuf.Descriptors.EnumValueDescriptor
-    getValueDescriptor() {
-      if (this == UNRECOGNIZED) {
-        throw new java.lang.IllegalStateException(
-          "Can't get the descriptor of an unrecognized enum value.");
-      }
-      return getDescriptor().getValues().get(ordinal());
-    }
-
-    public final com.google.protobuf.Descriptors.EnumDescriptor
-    getDescriptorForType() {
-      return getDescriptor();
-    }
-
-    public static final com.google.protobuf.Descriptors.EnumDescriptor
-    getDescriptor() {
-      return kafdrop.protos.Person.getDescriptor().getEnumTypes().get(0);
-    }
-
-    private static final Contact[] VALUES = values();
-
-    public static Contact valueOf(
-      com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-      if (desc.getType() != getDescriptor()) {
-        throw new java.lang.IllegalArgumentException(
-          "EnumValueDescriptor is not for this type.");
-      }
-      if (desc.getIndex() == -1) {
-        return UNRECOGNIZED;
-      }
-      return VALUES[desc.getIndex()];
-    }
-
-    private final int value;
-
-    private Contact(int value) {
-      this.value = value;
-    }
-
-    // @@protoc_insertion_point(enum_scope:kafdrop.Person.Contact)
-  }
-
-  public static final int NAME_FIELD_NUMBER = 1;
-  private volatile java.lang.Object name_;
-
-  /**
-   * <code>string name = 1;</code>
-   *
-   * @return The name.
-   */
-  @java.lang.Override
-  public java.lang.String getName() {
-    java.lang.Object ref = name_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs =
-        (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      name_ = s;
-      return s;
-    }
-  }
-
-  /**
-   * <code>string name = 1;</code>
-   *
-   * @return The bytes for name.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-  getNameBytes() {
-    java.lang.Object ref = name_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-        com.google.protobuf.ByteString.copyFromUtf8(
-          (java.lang.String) ref);
-      name_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int ID_FIELD_NUMBER = 2;
-  private int id_;
-
-  /**
-   * <code>int32 id = 2;</code>
-   *
-   * @return The id.
-   */
-  @java.lang.Override
-  public int getId() {
-    return id_;
-  }
-
-  public static final int EMAIL_FIELD_NUMBER = 3;
-  private volatile java.lang.Object email_;
-
-  /**
-   * <code>string email = 3;</code>
-   *
-   * @return The email.
-   */
-  @java.lang.Override
-  public java.lang.String getEmail() {
-    java.lang.Object ref = email_;
-    if (ref instanceof java.lang.String) {
-      return (java.lang.String) ref;
-    } else {
-      com.google.protobuf.ByteString bs =
-        (com.google.protobuf.ByteString) ref;
-      java.lang.String s = bs.toStringUtf8();
-      email_ = s;
-      return s;
-    }
-  }
-
-  /**
-   * <code>string email = 3;</code>
-   *
-   * @return The bytes for email.
-   */
-  @java.lang.Override
-  public com.google.protobuf.ByteString
-  getEmailBytes() {
-    java.lang.Object ref = email_;
-    if (ref instanceof java.lang.String) {
-      com.google.protobuf.ByteString b =
-        com.google.protobuf.ByteString.copyFromUtf8(
-          (java.lang.String) ref);
-      email_ = b;
-      return b;
-    } else {
-      return (com.google.protobuf.ByteString) ref;
-    }
-  }
-
-  public static final int CONTACT_FIELD_NUMBER = 4;
-  private int contact_;
-
-  /**
-   * <code>.kafdrop.Person.Contact contact = 4;</code>
-   *
-   * @return The enum numeric value on the wire for contact.
-   */
-  @java.lang.Override
-  public int getContactValue() {
-    return contact_;
-  }
-
-  /**
-   * <code>.kafdrop.Person.Contact contact = 4;</code>
-   *
-   * @return The contact.
-   */
-  @java.lang.Override
-  public kafdrop.protos.Person.Contact getContact() {
-    @SuppressWarnings("deprecation")
-    kafdrop.protos.Person.Contact result = kafdrop.protos.Person.Contact.valueOf(contact_);
-    return result == null ? kafdrop.protos.Person.Contact.UNRECOGNIZED : result;
-  }
-
-  public static final int DATA_FIELD_NUMBER = 5;
-  private com.google.protobuf.LazyStringList data_;
-
-  /**
-   * <code>repeated string data = 5;</code>
-   *
-   * @return A list containing the data.
-   */
-  public com.google.protobuf.ProtocolStringList
-  getDataList() {
-    return data_;
-  }
-
-  /**
-   * <code>repeated string data = 5;</code>
-   *
-   * @return The count of data.
-   */
-  public int getDataCount() {
-    return data_.size();
-  }
-
-  /**
-   * <code>repeated string data = 5;</code>
-   *
-   * @param index The index of the element to return.
-   * @return The data at the given index.
-   */
-  public java.lang.String getData(int index) {
-    return data_.get(index);
-  }
-
-  /**
-   * <code>repeated string data = 5;</code>
-   *
-   * @param index The index of the value to return.
-   * @return The bytes of the data at the given index.
-   */
-  public com.google.protobuf.ByteString
-  getDataBytes(int index) {
-    return data_.getByteString(index);
-  }
-
-  private byte memoizedIsInitialized = -1;
-
-  @java.lang.Override
-  public final boolean isInitialized() {
-    byte isInitialized = memoizedIsInitialized;
-    if (isInitialized == 1) return true;
-    if (isInitialized == 0) return false;
-
-    memoizedIsInitialized = 1;
-    return true;
-  }
-
-  @java.lang.Override
-  public void writeTo(com.google.protobuf.CodedOutputStream output)
-    throws java.io.IOException {
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
-    }
-    if (id_ != 0) {
-      output.writeInt32(2, id_);
-    }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(email_)) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, email_);
-    }
-    if (contact_ != kafdrop.protos.Person.Contact.TELEPHONE.getNumber()) {
-      output.writeEnum(4, contact_);
-    }
-    for (int i = 0; i < data_.size(); i++) {
-      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, data_.getRaw(i));
-    }
-    unknownFields.writeTo(output);
-  }
-
-  @java.lang.Override
-  public int getSerializedSize() {
-    int size = memoizedSize;
-    if (size != -1) return size;
-
-    size = 0;
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
-    }
-    if (id_ != 0) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeInt32Size(2, id_);
-    }
-    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(email_)) {
-      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, email_);
-    }
-    if (contact_ != kafdrop.protos.Person.Contact.TELEPHONE.getNumber()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeEnumSize(4, contact_);
-    }
-    {
-      int dataSize = 0;
-      for (int i = 0; i < data_.size(); i++) {
-        dataSize += computeStringSizeNoTag(data_.getRaw(i));
-      }
-      size += dataSize;
-      size += 1 * getDataList().size();
-    }
-    size += unknownFields.getSerializedSize();
-    memoizedSize = size;
-    return size;
-  }
-
-  @java.lang.Override
-  public boolean equals(final java.lang.Object obj) {
-    if (obj == this) {
-      return true;
-    }
-    if (!(obj instanceof kafdrop.protos.Person)) {
-      return super.equals(obj);
-    }
-    kafdrop.protos.Person other = (kafdrop.protos.Person) obj;
-
-    if (!getName()
-      .equals(other.getName())) return false;
-    if (getId()
-      != other.getId()) return false;
-    if (!getEmail()
-      .equals(other.getEmail())) return false;
-    if (contact_ != other.contact_) return false;
-    if (!getDataList()
-      .equals(other.getDataList())) return false;
-    if (!unknownFields.equals(other.unknownFields)) return false;
-    return true;
-  }
-
-  @java.lang.Override
-  public int hashCode() {
-    if (memoizedHashCode != 0) {
-      return memoizedHashCode;
-    }
-    int hash = 41;
-    hash = (19 * hash) + getDescriptor().hashCode();
-    hash = (37 * hash) + NAME_FIELD_NUMBER;
-    hash = (53 * hash) + getName().hashCode();
-    hash = (37 * hash) + ID_FIELD_NUMBER;
-    hash = (53 * hash) + getId();
-    hash = (37 * hash) + EMAIL_FIELD_NUMBER;
-    hash = (53 * hash) + getEmail().hashCode();
-    hash = (37 * hash) + CONTACT_FIELD_NUMBER;
-    hash = (53 * hash) + contact_;
-    if (getDataCount() > 0) {
-      hash = (37 * hash) + DATA_FIELD_NUMBER;
-      hash = (53 * hash) + getDataList().hashCode();
-    }
-    hash = (29 * hash) + unknownFields.hashCode();
-    memoizedHashCode = hash;
-    return hash;
   }
 
   public static kafdrop.protos.Person parseFrom(
@@ -597,17 +211,305 @@ public final class Person extends
       .parseWithIOException(PARSER, input, extensionRegistry);
   }
 
-  @java.lang.Override
-  public Builder newBuilderForType() {
-    return newBuilder();
-  }
-
   public static Builder newBuilder() {
     return DEFAULT_INSTANCE.toBuilder();
   }
 
   public static Builder newBuilder(kafdrop.protos.Person prototype) {
     return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+  }
+
+  public static kafdrop.protos.Person getDefaultInstance() {
+    return DEFAULT_INSTANCE;
+  }
+
+  public static com.google.protobuf.Parser<Person> parser() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  @SuppressWarnings({"unused"})
+  protected java.lang.Object newInstance(
+    UnusedPrivateParameter unused) {
+    return new Person();
+  }
+
+  @java.lang.Override
+  public com.google.protobuf.UnknownFieldSet
+  getUnknownFields() {
+    return this.unknownFields;
+  }
+
+  @java.lang.Override
+  protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+  internalGetFieldAccessorTable() {
+    return kafdrop.protos.PersonProto.internal_static_kafdrop_Person_fieldAccessorTable
+      .ensureFieldAccessorsInitialized(
+        kafdrop.protos.Person.class, kafdrop.protos.Person.Builder.class);
+  }
+
+  /**
+   * <code>string name = 1;</code>
+   *
+   * @return The name.
+   */
+  @java.lang.Override
+  public java.lang.String getName() {
+    java.lang.Object ref = name_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs =
+        (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      name_ = s;
+      return s;
+    }
+  }
+
+  /**
+   * <code>string name = 1;</code>
+   *
+   * @return The bytes for name.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+  getNameBytes() {
+    java.lang.Object ref = name_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString.copyFromUtf8(
+          (java.lang.String) ref);
+      name_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  /**
+   * <code>int32 id = 2;</code>
+   *
+   * @return The id.
+   */
+  @java.lang.Override
+  public int getId() {
+    return id_;
+  }
+
+  /**
+   * <code>string email = 3;</code>
+   *
+   * @return The email.
+   */
+  @java.lang.Override
+  public java.lang.String getEmail() {
+    java.lang.Object ref = email_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      com.google.protobuf.ByteString bs =
+        (com.google.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      email_ = s;
+      return s;
+    }
+  }
+
+  /**
+   * <code>string email = 3;</code>
+   *
+   * @return The bytes for email.
+   */
+  @java.lang.Override
+  public com.google.protobuf.ByteString
+  getEmailBytes() {
+    java.lang.Object ref = email_;
+    if (ref instanceof java.lang.String) {
+      com.google.protobuf.ByteString b =
+        com.google.protobuf.ByteString.copyFromUtf8(
+          (java.lang.String) ref);
+      email_ = b;
+      return b;
+    } else {
+      return (com.google.protobuf.ByteString) ref;
+    }
+  }
+
+  /**
+   * <code>.kafdrop.Person.Contact contact = 4;</code>
+   *
+   * @return The enum numeric value on the wire for contact.
+   */
+  @java.lang.Override
+  public int getContactValue() {
+    return contact_;
+  }
+
+  /**
+   * <code>.kafdrop.Person.Contact contact = 4;</code>
+   *
+   * @return The contact.
+   */
+  @java.lang.Override
+  public kafdrop.protos.Person.Contact getContact() {
+    @SuppressWarnings("deprecation")
+    kafdrop.protos.Person.Contact result = kafdrop.protos.Person.Contact.valueOf(contact_);
+    return result == null ? kafdrop.protos.Person.Contact.UNRECOGNIZED : result;
+  }
+
+  /**
+   * <code>repeated string data = 5;</code>
+   *
+   * @return A list containing the data.
+   */
+  public com.google.protobuf.ProtocolStringList
+  getDataList() {
+    return data_;
+  }
+
+  /**
+   * <code>repeated string data = 5;</code>
+   *
+   * @return The count of data.
+   */
+  public int getDataCount() {
+    return data_.size();
+  }
+
+  /**
+   * <code>repeated string data = 5;</code>
+   *
+   * @param index The index of the element to return.
+   * @return The data at the given index.
+   */
+  public java.lang.String getData(int index) {
+    return data_.get(index);
+  }
+
+  /**
+   * <code>repeated string data = 5;</code>
+   *
+   * @param index The index of the value to return.
+   * @return The bytes of the data at the given index.
+   */
+  public com.google.protobuf.ByteString
+  getDataBytes(int index) {
+    return data_.getByteString(index);
+  }
+
+  @java.lang.Override
+  public boolean isInitialized() {
+    byte isInitialized = memoizedIsInitialized;
+    if (isInitialized == 1) return true;
+    if (isInitialized == 0) return false;
+
+    memoizedIsInitialized = 1;
+    return true;
+  }
+
+  @java.lang.Override
+  public void writeTo(com.google.protobuf.CodedOutputStream output)
+    throws java.io.IOException {
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 1, name_);
+    }
+    if (id_ != 0) {
+      output.writeInt32(2, id_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(email_)) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 3, email_);
+    }
+    if (contact_ != kafdrop.protos.Person.Contact.TELEPHONE.getNumber()) {
+      output.writeEnum(4, contact_);
+    }
+    for (int i = 0; i < data_.size(); i++) {
+      com.google.protobuf.GeneratedMessageV3.writeString(output, 5, data_.getRaw(i));
+    }
+    unknownFields.writeTo(output);
+  }
+
+  @java.lang.Override
+  public int getSerializedSize() {
+    int size = memoizedSize;
+    if (size != -1) return size;
+
+    size = 0;
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(name_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, name_);
+    }
+    if (id_ != 0) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt32Size(2, id_);
+    }
+    if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(email_)) {
+      size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, email_);
+    }
+    if (contact_ != kafdrop.protos.Person.Contact.TELEPHONE.getNumber()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(4, contact_);
+    }
+    {
+      int dataSize = 0;
+      for (int i = 0; i < data_.size(); i++) {
+        dataSize += computeStringSizeNoTag(data_.getRaw(i));
+      }
+      size += dataSize;
+      size += getDataList().size();
+    }
+    size += unknownFields.getSerializedSize();
+    memoizedSize = size;
+    return size;
+  }
+
+  @java.lang.Override
+  public boolean equals(final java.lang.Object obj) {
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof Person other)) {
+      return super.equals(obj);
+    }
+
+    if (!getName()
+      .equals(other.getName())) return false;
+    if (getId()
+      != other.getId()) return false;
+    if (!getEmail()
+      .equals(other.getEmail())) return false;
+    if (contact_ != other.contact_) return false;
+    if (!getDataList()
+      .equals(other.getDataList())) return false;
+    return unknownFields.equals(other.unknownFields);
+  }
+
+  @java.lang.Override
+  public int hashCode() {
+    if (memoizedHashCode != 0) {
+      return memoizedHashCode;
+    }
+    int hash = 41;
+    hash = (19 * hash) + getDescriptor().hashCode();
+    hash = (37 * hash) + NAME_FIELD_NUMBER;
+    hash = (53 * hash) + getName().hashCode();
+    hash = (37 * hash) + ID_FIELD_NUMBER;
+    hash = (53 * hash) + getId();
+    hash = (37 * hash) + EMAIL_FIELD_NUMBER;
+    hash = (53 * hash) + getEmail().hashCode();
+    hash = (37 * hash) + CONTACT_FIELD_NUMBER;
+    hash = (53 * hash) + contact_;
+    if (getDataCount() > 0) {
+      hash = (37 * hash) + DATA_FIELD_NUMBER;
+      hash = (53 * hash) + getDataList().hashCode();
+    }
+    hash = (29 * hash) + unknownFields.hashCode();
+    memoizedHashCode = hash;
+    return hash;
+  }
+
+  @java.lang.Override
+  public Builder newBuilderForType() {
+    return newBuilder();
   }
 
   @java.lang.Override
@@ -623,6 +525,126 @@ public final class Person extends
     return builder;
   }
 
+  @java.lang.Override
+  public com.google.protobuf.Parser<Person> getParserForType() {
+    return PARSER;
+  }
+
+  @java.lang.Override
+  public kafdrop.protos.Person getDefaultInstanceForType() {
+    return DEFAULT_INSTANCE;
+  }
+
+  /**
+   * Protobuf enum {@code kafdrop.Person.Contact}
+   */
+  public enum Contact
+    implements com.google.protobuf.ProtocolMessageEnum {
+    /**
+     * <code>TELEPHONE = 0;</code>
+     */
+    TELEPHONE(0),
+    /**
+     * <code>MOBILE = 1;</code>
+     */
+    MOBILE(1),
+    UNRECOGNIZED(-1),
+    ;
+
+    /**
+     * <code>TELEPHONE = 0;</code>
+     */
+    public static final int TELEPHONE_VALUE = 0;
+    /**
+     * <code>MOBILE = 1;</code>
+     */
+    public static final int MOBILE_VALUE = 1;
+    private static final com.google.protobuf.Internal.EnumLiteMap<
+      Contact> internalValueMap =
+      new com.google.protobuf.Internal.EnumLiteMap<Contact>() {
+        public Contact findValueByNumber(int number) {
+          return Contact.forNumber(number);
+        }
+      };
+    private static final Contact[] VALUES = values();
+    private final int value;
+
+    Contact(int value) {
+      this.value = value;
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     * @deprecated Use {@link #forNumber(int)} instead.
+     */
+    @java.lang.Deprecated
+    public static Contact valueOf(int value) {
+      return forNumber(value);
+    }
+
+    /**
+     * @param value The numeric wire value of the corresponding enum entry.
+     * @return The enum associated with the given numeric wire value.
+     */
+    public static Contact forNumber(int value) {
+      switch (value) {
+        case 0:
+          return TELEPHONE;
+        case 1:
+          return MOBILE;
+        default:
+          return null;
+      }
+    }
+
+    public static com.google.protobuf.Internal.EnumLiteMap<Contact>
+    internalGetValueMap() {
+      return internalValueMap;
+    }
+
+    public static final com.google.protobuf.Descriptors.EnumDescriptor
+    getDescriptor() {
+      return kafdrop.protos.Person.getDescriptor().getEnumTypes().get(0);
+    }
+
+    public static Contact valueOf(
+      com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+      if (desc.getType() != getDescriptor()) {
+        throw new java.lang.IllegalArgumentException(
+          "EnumValueDescriptor is not for this type.");
+      }
+      if (desc.getIndex() == -1) {
+        return UNRECOGNIZED;
+      }
+      return VALUES[desc.getIndex()];
+    }
+
+    public final int getNumber() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalArgumentException(
+          "Can't get the number of an unknown enum value.");
+      }
+      return value;
+    }
+
+    public final com.google.protobuf.Descriptors.EnumValueDescriptor
+    getValueDescriptor() {
+      if (this == UNRECOGNIZED) {
+        throw new java.lang.IllegalStateException(
+          "Can't get the descriptor of an unrecognized enum value.");
+      }
+      return getDescriptor().getValues().get(ordinal());
+    }
+
+    public final com.google.protobuf.Descriptors.EnumDescriptor
+    getDescriptorForType() {
+      return getDescriptor();
+    }
+
+    // @@protoc_insertion_point(enum_scope:kafdrop.Person.Contact)
+  }
+
   /**
    * Protobuf type {@code kafdrop.Person}
    */
@@ -630,18 +652,12 @@ public final class Person extends
     com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
     // @@protoc_insertion_point(builder_implements:kafdrop.Person)
     kafdrop.protos.PersonOrBuilder {
-    public static final com.google.protobuf.Descriptors.Descriptor
-    getDescriptor() {
-      return kafdrop.protos.PersonProto.internal_static_kafdrop_Person_descriptor;
-    }
-
-    @java.lang.Override
-    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-    internalGetFieldAccessorTable() {
-      return kafdrop.protos.PersonProto.internal_static_kafdrop_Person_fieldAccessorTable
-        .ensureFieldAccessorsInitialized(
-          kafdrop.protos.Person.class, kafdrop.protos.Person.Builder.class);
-    }
+    private int bitField0_;
+    private java.lang.Object name_ = "";
+    private int id_;
+    private java.lang.Object email_ = "";
+    private int contact_ = 0;
+    private com.google.protobuf.LazyStringList data_ = com.google.protobuf.LazyStringArrayList.EMPTY;
 
     // Construct using kafdrop.protos.Person.newBuilder()
     private Builder() {
@@ -652,6 +668,19 @@ public final class Person extends
       com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
       maybeForceBuilderInitialization();
+    }
+
+    public static com.google.protobuf.Descriptors.Descriptor
+    getDescriptor() {
+      return kafdrop.protos.PersonProto.internal_static_kafdrop_Person_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+    internalGetFieldAccessorTable() {
+      return kafdrop.protos.PersonProto.internal_static_kafdrop_Person_fieldAccessorTable
+        .ensureFieldAccessorsInitialized(
+          kafdrop.protos.Person.class, kafdrop.protos.Person.Builder.class);
     }
 
     private void maybeForceBuilderInitialization() {
@@ -793,7 +822,7 @@ public final class Person extends
     }
 
     @java.lang.Override
-    public final boolean isInitialized() {
+    public boolean isInitialized() {
       return true;
     }
 
@@ -816,10 +845,6 @@ public final class Person extends
       return this;
     }
 
-    private int bitField0_;
-
-    private java.lang.Object name_ = "";
-
     /**
      * <code>string name = 1;</code>
      *
@@ -836,6 +861,23 @@ public final class Person extends
       } else {
         return (java.lang.String) ref;
       }
+    }
+
+    /**
+     * <code>string name = 1;</code>
+     *
+     * @param value The name to set.
+     * @return This builder for chaining.
+     */
+    public Builder setName(
+      java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      name_ = value;
+      onChanged();
+      return this;
     }
 
     /**
@@ -860,14 +902,15 @@ public final class Person extends
     /**
      * <code>string name = 1;</code>
      *
-     * @param value The name to set.
+     * @param value The bytes for name to set.
      * @return This builder for chaining.
      */
-    public Builder setName(
-      java.lang.String value) {
+    public Builder setNameBytes(
+      com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
+      checkByteStringIsUtf8(value);
 
       name_ = value;
       onChanged();
@@ -885,26 +928,6 @@ public final class Person extends
       onChanged();
       return this;
     }
-
-    /**
-     * <code>string name = 1;</code>
-     *
-     * @param value The bytes for name to set.
-     * @return This builder for chaining.
-     */
-    public Builder setNameBytes(
-      com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      name_ = value;
-      onChanged();
-      return this;
-    }
-
-    private int id_;
 
     /**
      * <code>int32 id = 2;</code>
@@ -941,8 +964,6 @@ public final class Person extends
       return this;
     }
 
-    private java.lang.Object email_ = "";
-
     /**
      * <code>string email = 3;</code>
      *
@@ -959,6 +980,23 @@ public final class Person extends
       } else {
         return (java.lang.String) ref;
       }
+    }
+
+    /**
+     * <code>string email = 3;</code>
+     *
+     * @param value The email to set.
+     * @return This builder for chaining.
+     */
+    public Builder setEmail(
+      java.lang.String value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+
+      email_ = value;
+      onChanged();
+      return this;
     }
 
     /**
@@ -983,14 +1021,15 @@ public final class Person extends
     /**
      * <code>string email = 3;</code>
      *
-     * @param value The email to set.
+     * @param value The bytes for email to set.
      * @return This builder for chaining.
      */
-    public Builder setEmail(
-      java.lang.String value) {
+    public Builder setEmailBytes(
+      com.google.protobuf.ByteString value) {
       if (value == null) {
         throw new NullPointerException();
       }
+      checkByteStringIsUtf8(value);
 
       email_ = value;
       onChanged();
@@ -1008,26 +1047,6 @@ public final class Person extends
       onChanged();
       return this;
     }
-
-    /**
-     * <code>string email = 3;</code>
-     *
-     * @param value The bytes for email to set.
-     * @return This builder for chaining.
-     */
-    public Builder setEmailBytes(
-      com.google.protobuf.ByteString value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      checkByteStringIsUtf8(value);
-
-      email_ = value;
-      onChanged();
-      return this;
-    }
-
-    private int contact_ = 0;
 
     /**
      * <code>.kafdrop.Person.Contact contact = 4;</code>
@@ -1092,10 +1111,8 @@ public final class Person extends
       return this;
     }
 
-    private com.google.protobuf.LazyStringList data_ = com.google.protobuf.LazyStringArrayList.EMPTY;
-
     private void ensureDataIsMutable() {
-      if (!((bitField0_ & 0x00000001) != 0)) {
+      if ((bitField0_ & 0x00000001) == 0) {
         data_ = new com.google.protobuf.LazyStringArrayList(data_);
         bitField0_ |= 0x00000001;
       }
@@ -1222,55 +1239,19 @@ public final class Person extends
     }
 
     @java.lang.Override
-    public final Builder setUnknownFields(
+    public Builder setUnknownFields(
       final com.google.protobuf.UnknownFieldSet unknownFields) {
       return super.setUnknownFields(unknownFields);
     }
 
     @java.lang.Override
-    public final Builder mergeUnknownFields(
+    public Builder mergeUnknownFields(
       final com.google.protobuf.UnknownFieldSet unknownFields) {
       return super.mergeUnknownFields(unknownFields);
     }
 
 
     // @@protoc_insertion_point(builder_scope:kafdrop.Person)
-  }
-
-  // @@protoc_insertion_point(class_scope:kafdrop.Person)
-  private static final kafdrop.protos.Person DEFAULT_INSTANCE;
-
-  static {
-    DEFAULT_INSTANCE = new kafdrop.protos.Person();
-  }
-
-  public static kafdrop.protos.Person getDefaultInstance() {
-    return DEFAULT_INSTANCE;
-  }
-
-  private static final com.google.protobuf.Parser<Person>
-    PARSER = new com.google.protobuf.AbstractParser<Person>() {
-    @java.lang.Override
-    public Person parsePartialFrom(
-      com.google.protobuf.CodedInputStream input,
-      com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-      throws com.google.protobuf.InvalidProtocolBufferException {
-      return new Person(input, extensionRegistry);
-    }
-  };
-
-  public static com.google.protobuf.Parser<Person> parser() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public com.google.protobuf.Parser<Person> getParserForType() {
-    return PARSER;
-  }
-
-  @java.lang.Override
-  public kafdrop.protos.Person getDefaultInstanceForType() {
-    return DEFAULT_INSTANCE;
   }
 
 }

@@ -55,18 +55,6 @@ public final class KafkaHighLevelAdminClient {
     adminClient = AdminClient.create(properties);
   }
 
-  final class ClusterDescription {
-    final Collection<Node> nodes;
-    final Node controller;
-    final String clusterId;
-
-    ClusterDescription(Collection<Node> nodes, Node controller, String clusterId) {
-      this.nodes = nodes;
-      this.controller = controller;
-      this.clusterId = clusterId;
-    }
-  }
-
   ClusterDescription describeCluster() {
     final var result = adminClient.describeCluster();
     final Collection<Node> nodes;
@@ -196,6 +184,18 @@ public final class KafkaHighLevelAdminClient {
       LOG.info("ACLs: {}", newlineDelimitedAcls);
     } catch (InterruptedException | ExecutionException e) {
       LOG.error("Error describing ACLs", e);
+    }
+  }
+
+  final class ClusterDescription {
+    final Collection<Node> nodes;
+    final Node controller;
+    final String clusterId;
+
+    ClusterDescription(Collection<Node> nodes, Node controller, String clusterId) {
+      this.nodes = nodes;
+      this.controller = controller;
+      this.clusterId = clusterId;
     }
   }
 }
