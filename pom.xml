@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.8</version>
+    <version>3.5.9</version>
   </parent>
   <groupId>com.obsidiandynamics.kafdrop</groupId>
   <artifactId>kafdrop</artifactId>
@@ -35,7 +35,8 @@
     <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
     <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
     <docker-maven-plugin.version>0.48.0</docker-maven-plugin.version>
-    <spring-boot-maven-plugin.version>3.5.8</spring-boot-maven-plugin.version>
+    <spring-boot-maven-plugin.version>4.0.1</spring-boot-maven-plugin.version>
+    <log4j.version>2.25.3</log4j.version>
   </properties>
 
   <scm>
@@ -44,13 +45,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>bintray-obsidiandynamics-kafdrop</id>
-      <name>obsidiandynamics-kafdrop</name>
-      <url>https://api.bintray.com/maven/obsidiandynamics/kafdrop/main/;publish=1</url>
-    </repository>
-  </distributionManagement>
 
   <repositories>
     <repository>
@@ -63,6 +57,30 @@
     </repository>
   </repositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-jul</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j2-impl</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
     <dependency>
