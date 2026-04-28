@@ -26,7 +26,7 @@
     <docker.platforms>linux/amd64,linux/arm64</docker.platforms>
     <commons-lang3.version>3.20.0</commons-lang3.version>
     <lombok.version>1.18.42</lombok.version>
-    <lz4-java.version>1.10.2</lz4-java.version>
+    <lz4-java.version>1.10.3</lz4-java.version>
     <avro.version>1.12.1</avro.version>
     <msgpack-core.version>0.9.11</msgpack-core.version>
     <springdoc-openapi-starter-webmvc-ui.version>2.8.14</springdoc-openapi-starter-webmvc-ui.version>
