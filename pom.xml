@@ -35,7 +35,7 @@
     <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
     <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
     <docker-maven-plugin.version>0.48.0</docker-maven-plugin.version>
-    <spring-boot-maven-plugin.version>4.0.1</spring-boot-maven-plugin.version>
+    <spring-boot-maven-plugin.version>4.0.6</spring-boot-maven-plugin.version>
     <log4j.version>2.25.4</log4j.version>
   </properties>
 
