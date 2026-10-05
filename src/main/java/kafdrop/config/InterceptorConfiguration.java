@@ -21,13 +21,13 @@ package kafdrop.config;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Component
+@Configuration
 public class InterceptorConfiguration implements WebMvcConfigurer {
   private final Environment environment;
 
@@ -45,7 +45,7 @@ public class InterceptorConfiguration implements WebMvcConfigurer {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) {
       final var activeProfiles = environment.getActiveProfiles();
-      if (modelAndView != null && activeProfiles != null && activeProfiles.length > 0) {
+      if (activeProfiles.length > 0) {
         modelAndView.addObject("profile", String.join(",", activeProfiles));
       }
     }

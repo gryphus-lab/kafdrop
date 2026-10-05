@@ -4,12 +4,13 @@ import jakarta.annotation.PostConstruct;
 import kafdrop.config.KafkaConfiguration;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.admin.GroupListing;
 import org.apache.kafka.clients.admin.DeleteTopicsOptions;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.Node;
+import org.apache.kafka.common.GroupType;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.acl.AccessControlEntryFilter;
 import org.apache.kafka.common.acl.AclBinding;
@@ -30,6 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -64,7 +66,10 @@ public final class KafkaHighLevelAdminClient {
       nodes = result.nodes().get();
       controller = result.controller().get();
       clusterId = result.clusterId().get();
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       throw new KafkaAdminClientException(e);
     }
 
@@ -72,20 +77,30 @@ public final class KafkaHighLevelAdminClient {
   }
 
   Set<String> listConsumerGroups() {
-    final Collection<ConsumerGroupListing> groupListing;
+    final Collection<GroupListing> groupListing;
     try {
-      groupListing = adminClient.listConsumerGroups().valid().get();
-    } catch (InterruptedException | ExecutionException e) {
+      groupListing = adminClient.listGroups().valid().get();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       throw new KafkaAdminClientException(e);
     }
-    return groupListing.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toSet());
+    return groupListing.stream()
+      .filter(group -> group.type().map(type -> type == GroupType.CONSUMER || type == GroupType.CLASSIC)
+        .orElse(false))
+      .map(group -> Objects.requireNonNull(group).groupId())
+      .collect(Collectors.toSet());
   }
 
   Map<TopicPartition, OffsetAndMetadata> listConsumerGroupOffsetsIfAuthorized(String groupId) {
     final var offsets = adminClient.listConsumerGroupOffsets(groupId);
     try {
       return offsets.partitionsToOffsetAndMetadata().get();
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       if (e.getCause() instanceof GroupAuthorizationException) {
         LOG.info("Not authorized to view consumer group {}; skipping", groupId);
         return Collections.emptyMap();
@@ -107,7 +122,10 @@ public final class KafkaHighLevelAdminClient {
       for (var entry : allConfigs.entrySet()) {
         configsByTopic.put(entry.getKey().name(), entry.getValue());
       }
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       if (e.getCause() instanceof UnsupportedVersionException) {
         return Map.of();
       } else if (e.getCause() instanceof TopicAuthorizationException) {
@@ -130,7 +148,11 @@ public final class KafkaHighLevelAdminClient {
     try {
       creationResult.all().get();
       LOG.info("Topic {} successfully created", newTopic.name());
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOG.error("Error while creating topic", e);
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       LOG.error("Error while creating topic", e);
       throw new KafkaAdminClientException(e);
     }
@@ -151,7 +173,11 @@ public final class KafkaHighLevelAdminClient {
       if (LOG.isInfoEnabled()) {
         LOG.info("Topic {} successfully deleted", topic);
       }
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOG.error("Error while deleting topic", e);
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       LOG.error("Error while deleting topic", e);
       throw new KafkaAdminClientException(e);
     }
@@ -163,7 +189,10 @@ public final class KafkaHighLevelAdminClient {
       aclsBindings = adminClient.describeAcls(new AclBindingFilter(ResourcePatternFilter.ANY,
           AccessControlEntryFilter.ANY))
         .values().get();
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       if (e.getCause() instanceof SecurityDisabledException) {
         return Collections.emptyList();
       } else {
@@ -182,7 +211,10 @@ public final class KafkaHighLevelAdminClient {
         newlineDelimitedAcls.append('\n').append(acl);
       }
       LOG.info("ACLs: {}", newlineDelimitedAcls);
-    } catch (InterruptedException | ExecutionException e) {
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOG.error("Error describing ACLs", e);
+    } catch (ExecutionException e) {
       LOG.error("Error describing ACLs", e);
     }
   }
