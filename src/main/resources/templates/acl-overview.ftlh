@@ -50,13 +50,13 @@
         <tbody>
         <#list acls as a>
             <tr class="dataRow">
-                <td>${a.name}</td>
-                <td>${a.principal}</td>
-                <td>${a.resourceType}</td>
-                <td>${a.patternType}</td>
-                <td>${a.operation}</td>
-                <td>${a.host}</td>
-                <td>${a.permissionType}</td>
+                <td>${a.name()}</td>
+                <td>${a.principal()}</td>
+                <td>${a.resourceType()}</td>
+                <td>${a.patternType()}</td>
+                <td>${a.operation()}</td>
+                <td>${a.host()}</td>
+                <td>${a.permissionType()}</td>
             </tr>
         </#list>
         </tbody>

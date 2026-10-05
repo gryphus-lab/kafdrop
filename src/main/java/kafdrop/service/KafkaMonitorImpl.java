@@ -88,21 +88,23 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
   private static List<ConsumerVO> convert(List<ConsumerGroupOffsets> consumerGroupOffsets,
                                           Collection<TopicVO> topicVos) {
     final var topicVoMap = topicVos.stream().collect(Collectors.toMap(TopicVO::getName, Function.identity()));
-    final var groupTopicPartitionOffsetMap = new TreeMap<String, Map<String, Map<Integer, Long>>>();
-
-    for (var consumerGroupOffset : consumerGroupOffsets) {
-      final var groupId = consumerGroupOffset.groupId;
-
-      for (var topicPartitionOffset : consumerGroupOffset.offsets.entrySet()) {
-        final var topic = topicPartitionOffset.getKey().topic();
-        final var partition = topicPartitionOffset.getKey().partition();
-        final var offset = topicPartitionOffset.getValue().offset();
-        groupTopicPartitionOffsetMap
-          .computeIfAbsent(groupId, unused -> new TreeMap<>())
-          .computeIfAbsent(topic, unused -> new TreeMap<>())
-          .put(partition, offset);
-      }
-    }
+    final var groupTopicPartitionOffsetMap = consumerGroupOffsets.stream()
+      .flatMap(consumerGroupOffset -> consumerGroupOffset.offsets.entrySet().stream()
+        .map(topicPartitionOffset -> Map.entry(consumerGroupOffset.groupId, topicPartitionOffset)))
+      .collect(Collectors.groupingBy(
+        Map.Entry::getKey,
+        TreeMap::new,
+        Collectors.groupingBy(
+          entry -> entry.getValue().getKey().topic(),
+          TreeMap::new,
+          Collectors.toMap(
+            entry -> entry.getValue().getKey().partition(),
+            entry -> entry.getValue().getValue().offset(),
+            (left, right) -> right,
+            TreeMap::new
+          )
+        )
+      ));
 
     final var consumerVos = new ArrayList<ConsumerVO>(consumerGroupOffsets.size());
     for (var groupTopicPartitionOffset : groupTopicPartitionOffsetMap.entrySet()) {
@@ -134,13 +136,18 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   @Override
   public List<BrokerVO> getBrokers() {
-    final var clusterDescription = highLevelAdminClient.describeCluster();
-    final var brokerVos = new ArrayList<BrokerVO>(clusterDescription.nodes.size());
-    for (var node : clusterDescription.nodes) {
-      final var isController = node.id() == clusterDescription.controller.id();
-      brokerVos.add(new BrokerVO(node.id(), node.host(), node.port(), node.rack(), isController));
+    try {
+      final var clusterDescription = highLevelAdminClient.describeCluster();
+      final var brokerVos = new ArrayList<BrokerVO>(clusterDescription.nodes.size());
+      for (var node : clusterDescription.nodes) {
+        final var isController = node.id() == clusterDescription.controller.id();
+        brokerVos.add(new BrokerVO(node.id(), node.host(), node.port(), node.rack(), isController));
+      }
+      return brokerVos;
+    } catch (RuntimeException ex) {
+      LOG.warn("Kafka cluster unavailable while fetching brokers", ex);
+      return Collections.emptyList();
     }
-    return brokerVos;
   }
 
   @Override
@@ -184,18 +191,28 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   @Override
   public List<TopicVO> getTopics() {
-    return getTopicMetadata(highLevelConsumer.getAllTopics()).values().stream()
-      .sorted(Comparator.comparing(TopicVO::getName))
-      .collect(Collectors.toList());
+    try {
+      return getTopicMetadata(highLevelConsumer.getAllTopics()).values().stream()
+        .sorted(Comparator.comparing(TopicVO::getName))
+        .collect(Collectors.toList());
+    } catch (RuntimeException ex) {
+      LOG.warn("Kafka cluster unavailable while fetching topics", ex);
+      return Collections.emptyList();
+    }
   }
 
   public List<TopicVO> getTopics(String[] topics) {
-    Map<String, List<PartitionInfo>> topicsMap = highLevelConsumer.getAllTopics();
+    try {
+      Map<String, List<PartitionInfo>> topicsMap = highLevelConsumer.getAllTopics();
 
-    ArrayList<TopicVO> topicVos = new ArrayList<>(getTopicMetadata(topicsMap, topics).values());
-    setTopicPartitionSizes(topicVos);
+      ArrayList<TopicVO> topicVos = new ArrayList<>(getTopicMetadata(topicsMap, topics).values());
+      setTopicPartitionSizes(topicVos);
 
-    return topicVos;
+      return topicVos;
+    } catch (RuntimeException ex) {
+      LOG.warn("Kafka cluster unavailable while fetching topics", ex);
+      return Collections.emptyList();
+    }
   }
 
   @Override
@@ -393,11 +410,12 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   private List<ConsumerGroupOffsets> getConsumerOffsets(Set<String> topics) {
     final var consumerGroups = highLevelAdminClient.listConsumerGroups();
-    return consumerGroups.stream()
-      .map(this::resolveOffsets)
+    final var offsetsByGroup = highLevelAdminClient.listConsumerGroupOffsetsBatch(consumerGroups);
+    return offsetsByGroup.entrySet().stream()
+      .map(entry -> new ConsumerGroupOffsets(entry.getKey(), entry.getValue()))
       .map(offsets -> offsets.forTopics(topics))
       .filter(not(ConsumerGroupOffsets::isEmpty))
-      .collect(Collectors.toList());
+      .toList();
   }
 
   @Override

@@ -1,5 +1,6 @@
 package kafdrop.service;
 
+import java.nio.charset.StandardCharsets;
 import jakarta.annotation.PostConstruct;
 import kafdrop.config.KafkaConfiguration;
 import kafdrop.model.CreateMessageVO;
@@ -50,11 +51,22 @@ public final class KafkaHighLevelProducer {
       message.getTopicPartition(), serializers.keySerializer().serializeMessage(message.getKey()),
       serializers.valueSerializer().serializeMessage(message.getValue()));
 
+    for (var header : message.getHeaders()) {
+      if (header.getKey() != null && !header.getKey().isBlank()) {
+        final var v = header.getValue() != null ? header.getValue() : "";
+        record.headers().add(header.getKey(), v.getBytes(StandardCharsets.UTF_8));
+      }
+    }
+
     Future<RecordMetadata> result = kafkaProducer.send(record);
     try {
       RecordMetadata recordMetadata = result.get();
       LOG.info("Record published successfully [{}]", recordMetadata);
       return recordMetadata;
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOG.error("Failed to publish message", e);
+      throw new KafkaProducerException(e);
     } catch (Exception e) {
       LOG.error("Failed to publish message", e);
       throw new KafkaProducerException(e);
