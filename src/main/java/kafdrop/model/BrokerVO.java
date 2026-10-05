@@ -19,4 +19,23 @@
 package kafdrop.model;
 
 public record BrokerVO(int id, String host, int port, String rack, boolean controller) {
+  public int getId() {
+    return id;
+  }
+
+  public String getHost() {
+    return host;
+  }
+
+  public int getPort() {
+    return port;
+  }
+
+  public String getRack() {
+    return rack;
+  }
+
+  public boolean isController() {
+    return controller;
+  }
 }
