@@ -18,9 +18,11 @@
 
 package kafdrop.config;
 
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthEndpoint;
-import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor;
+import org.springframework.boot.health.actuate.endpoint.HealthDescriptor;
+import org.springframework.boot.health.actuate.endpoint.HealthEndpoint;
+import org.springframework.boot.health.actuate.endpoint.IndicatedHealthDescriptor;
+import org.springframework.boot.health.contributor.Status;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -43,28 +45,38 @@ public class HealthCheckConfiguration {
 
     @ManagedAttribute
     public Map<String, Object> getHealth() {
-      final var health = (Health) healthEndpoint.health();
+      final var health = healthEndpoint.health();
       final var healthMap = new LinkedHashMap<String, Object>();
-      healthMap.put("status", getStatus(health));
-      healthMap.put("detail", getDetails(health.getDetails()));
+      healthMap.put("status", getStatus(health.getStatus()));
+      healthMap.put("detail", health instanceof CompositeHealthDescriptor compositeHealth
+        ? getDetails(compositeHealth.getComponents()) : Map.of());
       return healthMap;
     }
 
-    private Map<String, Object> getDetails(Map<String, Object> details) {
+    private Map<String, Object> getDetails(Map<String, HealthDescriptor> details) {
       return details.entrySet().stream()
         .collect(Collectors.toMap(Map.Entry::getKey,
           e -> {
-            final var health = (Health) e.getValue();
+            final var health = e.getValue();
             final var detail = new LinkedHashMap<String, Object>();
             final var healthy = Status.UP.equals(health.getStatus());
             detail.put("healthy", healthy);
-            detail.put("message", health.getDetails().toString());
+            detail.put("message", getHealthDetails(health).toString());
             return detail;
           }));
     }
 
-    private String getStatus(Health health) {
-      final var status = health.getStatus();
+    private Map<String, Object> getHealthDetails(HealthDescriptor health) {
+      if (health instanceof CompositeHealthDescriptor compositeHealth) {
+        return getDetails(compositeHealth.getComponents());
+      }
+      if (health instanceof IndicatedHealthDescriptor indicatedHealth) {
+        return indicatedHealth.getDetails();
+      }
+      return Map.of();
+    }
+
+    private String getStatus(Status status) {
       if (Status.UP.equals(status) || Status.DOWN.equals(status)) {
         return status.toString();
       } else {
