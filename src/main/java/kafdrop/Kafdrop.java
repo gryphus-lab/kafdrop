@@ -129,7 +129,6 @@ public class Kafdrop {
       LOG.info("Initializing JAAS config");
       final String env = environment.getProperty("kafka.env");
       LOG.info("Env: {}", env);
-      String path;
 
       if (environment.containsProperty(SM_CONFIG_DIR)) {
         Stream.of("kafdrop", "global")

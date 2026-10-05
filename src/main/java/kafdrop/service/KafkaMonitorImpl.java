@@ -78,13 +78,18 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   @Override
   public List<BrokerVO> getBrokers() {
-    final var clusterDescription = highLevelAdminClient.describeCluster();
-    final var brokerVos = new ArrayList<BrokerVO>(clusterDescription.nodes.size());
-    for (var node : clusterDescription.nodes) {
-      final var isController = node.id() == clusterDescription.controller.id();
-      brokerVos.add(new BrokerVO(node.id(), node.host(), node.port(), node.rack(), isController));
+    try {
+      final var clusterDescription = highLevelAdminClient.describeCluster();
+      final var brokerVos = new ArrayList<BrokerVO>(clusterDescription.nodes.size());
+      for (var node : clusterDescription.nodes) {
+        final var isController = node.id() == clusterDescription.controller.id();
+        brokerVos.add(new BrokerVO(node.id(), node.host(), node.port(), node.rack(), isController));
+      }
+      return brokerVos;
+    } catch (RuntimeException ex) {
+      LOG.warn("Kafka cluster unavailable while fetching brokers", ex);
+      return Collections.emptyList();
     }
-    return brokerVos;
   }
 
   @Override
@@ -128,18 +133,28 @@ public final class KafkaMonitorImpl implements KafkaMonitor {
 
   @Override
   public List<TopicVO> getTopics() {
-    return getTopicMetadata(highLevelConsumer.getAllTopics()).values().stream()
-      .sorted(Comparator.comparing(TopicVO::getName))
-      .collect(Collectors.toList());
+    try {
+      return getTopicMetadata(highLevelConsumer.getAllTopics()).values().stream()
+        .sorted(Comparator.comparing(TopicVO::getName))
+        .collect(Collectors.toList());
+    } catch (RuntimeException ex) {
+      LOG.warn("Kafka cluster unavailable while fetching topics", ex);
+      return Collections.emptyList();
+    }
   }
 
   public List<TopicVO> getTopics(String[] topics) {
-    Map<String, List<PartitionInfo>> topicsMap = highLevelConsumer.getAllTopics();
+    try {
+      Map<String, List<PartitionInfo>> topicsMap = highLevelConsumer.getAllTopics();
 
-    ArrayList<TopicVO> topicVos = new ArrayList<>(getTopicMetadata(topicsMap, topics).values());
-    setTopicPartitionSizes(topicVos);
+      ArrayList<TopicVO> topicVos = new ArrayList<>(getTopicMetadata(topicsMap, topics).values());
+      setTopicPartitionSizes(topicVos);
 
-    return topicVos;
+      return topicVos;
+    } catch (RuntimeException ex) {
+      LOG.warn("Kafka cluster unavailable while fetching topics", ex);
+      return Collections.emptyList();
+    }
   }
 
   @Override
