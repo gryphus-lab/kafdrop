@@ -203,8 +203,8 @@ public final class MessageController {
     if (messageForm.isEmpty()) {
       final PartitionOffsetInfo defaultForm = new PartitionOffsetInfo();
 
-      defaultForm.setCount(100l);
-      defaultForm.setOffset(0l);
+      defaultForm.setCount(100L);
+      defaultForm.setOffset(0L);
       defaultForm.setPartition(0);
       defaultForm.setFormat(defaultFormat);
       defaultForm.setKeyFormat(defaultKeyFormat);
@@ -274,7 +274,7 @@ public final class MessageController {
 
       final PartitionOffsetInfo defaultForm = new PartitionOffsetInfo();
 
-      defaultForm.setCount(100l);
+      defaultForm.setCount(100L);
       defaultForm.setOffset(recordMetadata.offset());
       defaultForm.setPartition(body.getTopicPartition());
       defaultForm.setFormat(defaultFormat);

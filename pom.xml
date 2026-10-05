@@ -24,6 +24,19 @@
     <testcontainers.version>2.0.5</testcontainers.version>
     <kafka-libs.version>8.3.2</kafka-libs.version>
     <docker.platforms>linux/amd64,linux/arm64</docker.platforms>
+    <commons-lang3.version>3.20.0</commons-lang3.version>
+    <lombok.version>1.18.42</lombok.version>
+    <lz4-java.version>1.10.3</lz4-java.version>
+    <avro.version>1.12.1</avro.version>
+    <msgpack-core.version>0.9.11</msgpack-core.version>
+    <springdoc-openapi-starter-webmvc-ui.version>2.8.17</springdoc-openapi-starter-webmvc-ui.version>
+    <commons-compress.version>1.28.0</commons-compress.version>
+    <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+    <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
+    <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+    <docker-maven-plugin.version>0.48.0</docker-maven-plugin.version>
+    <spring-boot-maven-plugin.version>4.0.6</spring-boot-maven-plugin.version>
+    <log4j.version>2.25.4</log4j.version>
   </properties>
 
   <scm>
@@ -32,13 +45,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>bintray-obsidiandynamics-kafdrop</id>
-      <name>obsidiandynamics-kafdrop</name>
-      <url>https://api.bintray.com/maven/obsidiandynamics/kafdrop/main/;publish=1</url>
-    </repository>
-  </distributionManagement>
 
   <repositories>
     <repository>
@@ -51,6 +57,30 @@
     </repository>
   </repositories>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-jul</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j2-impl</artifactId>
+        <version>${log4j.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
     <dependency>
@@ -241,7 +271,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-compress</artifactId>
-      <version>1.28.0</version>
+      <version>${commons-compress.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.apache.commons</groupId>
@@ -280,7 +310,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>${maven-assembly-plugin.version}</version>
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/bin.xml</descriptor>

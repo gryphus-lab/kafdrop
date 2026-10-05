@@ -112,6 +112,12 @@ public final class TopicPartitionVO {
     this.firstOffset = firstOffset;
   }
 
+  @Override
+  public String toString() {
+    return TopicPartitionVO.class.getSimpleName() + " [id=" + id + ", firstOffset=" + firstOffset + ", size=" + size
+      + "]";
+  }
+
   public static final class PartitionReplica {
     private final Integer id;
     private final boolean inSync;
@@ -140,11 +146,5 @@ public final class TopicPartitionVO {
     boolean isOffline() {
       return offline;
     }
-  }
-
-  @Override
-  public String toString() {
-    return TopicPartitionVO.class.getSimpleName() + " [id=" + id + ", firstOffset=" + firstOffset + ", size=" + size
-      + "]";
   }
 }

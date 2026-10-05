@@ -1,14 +1,6 @@
 package kafdrop.form;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import kafdrop.util.MessageFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
 
 public class SearchMessageForm extends SearchMessageFormForJson {
 
@@ -17,7 +9,7 @@ public class SearchMessageForm extends SearchMessageFormForJson {
   private String msgTypeName;
 
   public SearchMessageForm(String searchText, MessageFormat format) {
-    super (searchText, format);
+    super(searchText, format);
   }
 
   public SearchMessageForm(String searchText) {

@@ -31,12 +31,12 @@ public final class ClusterSummaryVO {
   /**
    * Number of partitions each broker is the leader for
    */
-  private Map<Integer, Integer> brokerLeaderPartitionCount = new HashMap<>();
+  private final Map<Integer, Integer> brokerLeaderPartitionCount = new HashMap<>();
 
   /**
    * Number of partitions each broker should be the leader for
    */
-  private Map<Integer, Integer> brokerPreferredLeaderPartitionCount = new HashMap<>();
+  private final Map<Integer, Integer> brokerPreferredLeaderPartitionCount = new HashMap<>();
 
   public int getTopicCount() {
     return topicCount;

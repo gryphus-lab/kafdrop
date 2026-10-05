@@ -33,7 +33,7 @@ public class IniFilePropertySource extends MapPropertySource {
     final Map<String, Object> properties = Maps.newLinkedHashMap();
     properties.putAll(iniProperties.getDefaultProperties());
 
-    if (activeProfiles != null && activeProfiles.length > 0) {
+    if (activeProfiles != null) {
       for (String profile : activeProfiles) {
         final Map<String, String> sectionProperties = iniProperties.getSectionProperties(profile);
         if (sectionProperties != null) {

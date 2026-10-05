@@ -1,11 +1,10 @@
 package kafdrop.service;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-import java.util.concurrent.Future;
-
-
 import jakarta.annotation.PostConstruct;
+import kafdrop.config.KafkaConfiguration;
+import kafdrop.model.CreateMessageVO;
+import kafdrop.util.Serializers;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -15,9 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import kafdrop.config.KafkaConfiguration;
-import kafdrop.model.CreateMessageVO;
-import kafdrop.util.Serializers;
+import java.util.Properties;
+import java.util.concurrent.Future;
 
 @Service
 public final class KafkaHighLevelProducer {
@@ -50,8 +48,8 @@ public final class KafkaHighLevelProducer {
     initializeClient();
 
     final ProducerRecord<byte[], byte[]> record = new ProducerRecord<byte[], byte[]>(message.getTopic(),
-      message.getTopicPartition(), serializers.getKeySerializer().serializeMessage(message.getKey()),
-      serializers.getValueSerializer().serializeMessage(message.getValue()));
+      message.getTopicPartition(), serializers.keySerializer().serializeMessage(message.getKey()),
+      serializers.valueSerializer().serializeMessage(message.getValue()));
 
     for (var header : message.getHeaders()) {
       if (header.getKey() != null && !header.getKey().isBlank()) {
@@ -65,6 +63,10 @@ public final class KafkaHighLevelProducer {
       RecordMetadata recordMetadata = result.get();
       LOG.info("Record published successfully [{}]", recordMetadata);
       return recordMetadata;
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      LOG.error("Failed to publish message", e);
+      throw new KafkaProducerException(e);
     } catch (Exception e) {
       LOG.error("Failed to publish message", e);
       throw new KafkaProducerException(e);

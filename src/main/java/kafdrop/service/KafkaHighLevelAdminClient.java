@@ -60,18 +60,6 @@ public final class KafkaHighLevelAdminClient {
     adminClient = AdminClient.create(properties);
   }
 
-  final class ClusterDescription {
-    final Collection<Node> nodes;
-    final Node controller;
-    final String clusterId;
-
-    ClusterDescription(Collection<Node> nodes, Node controller, String clusterId) {
-      this.nodes = nodes;
-      this.controller = controller;
-      this.clusterId = clusterId;
-    }
-  }
-
   ClusterDescription describeCluster() {
     final var result = adminClient.describeCluster();
     final Collection<Node> nodes;
@@ -144,7 +132,7 @@ public final class KafkaHighLevelAdminClient {
   Map<String, Config> describeTopicConfigs(Set<String> topicNames) {
     final var resources = topicNames.stream()
       .map(topic -> new ConfigResource(Type.TOPIC, topic))
-      .collect(Collectors.toList());
+      .toList();
     final var result = adminClient.describeConfigs(resources);
     final Map<String, Config> configsByTopic;
     try {
@@ -189,16 +177,23 @@ public final class KafkaHighLevelAdminClient {
    * @throws KafkaAdminClientException if computation threw an Exception
    */
   void deleteTopic(String topic) {
+    final var safeTopicName = sanitizeLogValue(topic);
     DeleteTopicsOptions options = new DeleteTopicsOptions();
     options.timeoutMs(5000); // timeout after 5 seconds
     final var deleteTopicsResult = adminClient.deleteTopics(List.of(topic), options);
     try {
       deleteTopicsResult.all().get();
-      LOG.info("Topic {} successfully deleted", topic);
+      if (LOG.isInfoEnabled()) {
+        LOG.info("Topic {} successfully deleted", safeTopicName);
+      }
     } catch (InterruptedException | ExecutionException e) {
-      LOG.error("Error while deleting topic", e);
+      LOG.error("Error while deleting topic {}", safeTopicName, e);
       throw new KafkaAdminClientException(e);
     }
+  }
+
+  private static String sanitizeLogValue(String value) {
+    return value == null ? "<null>" : value.replaceAll("[\\r\\n]", "_");
   }
 
   Collection<AclBinding> listAcls() {
@@ -228,6 +223,18 @@ public final class KafkaHighLevelAdminClient {
       LOG.info("ACLs: {}", newlineDelimitedAcls);
     } catch (InterruptedException | ExecutionException e) {
       LOG.error("Error describing ACLs", e);
+    }
+  }
+
+  final class ClusterDescription {
+    final Collection<Node> nodes;
+    final Node controller;
+    final String clusterId;
+
+    ClusterDescription(Collection<Node> nodes, Node controller, String clusterId) {
+      this.nodes = nodes;
+      this.controller = controller;
+      this.clusterId = clusterId;
     }
   }
 }

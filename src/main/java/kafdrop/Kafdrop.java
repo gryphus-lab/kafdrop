@@ -50,7 +50,7 @@ import java.util.stream.Stream;
 public class Kafdrop {
   private static final Logger LOG = LoggerFactory.getLogger(Kafdrop.class);
 
-  public static void main(String[] args) {
+  static void main(String[] args) {
     createApplicationBuilder()
       .run(args);
   }
@@ -117,6 +117,19 @@ public class Kafdrop {
     private static final String SM_CONFIG_DIR = "sm.config.dir";
     private static final String CONFIG_SUFFIX = "-config.ini";
 
+    private static IniFilePropertySource readProperties(Environment environment, String name) {
+      final var file = new File(environment.getProperty(SM_CONFIG_DIR), name + CONFIG_SUFFIX);
+      if (file.exists() && file.canRead()) {
+        try (var in = new FileInputStream(file);
+             var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
+          return new IniFilePropertySource(name, new IniFileReader().read(reader), environment.getActiveProfiles());
+        } catch (IOException ex) {
+          LOG.error("Unable to read configuration file {}: {}", file, ex);
+        }
+      }
+      return null;
+    }
+
     @Override
     public int getOrder() {
       return Ordered.HIGHEST_PRECEDENCE + 10;
@@ -137,19 +150,6 @@ public class Kafdrop {
           .forEach(iniPropSource -> environment.getPropertySources()
             .addBefore("applicationConfigurationProperties", iniPropSource));
       }
-    }
-
-    private static IniFilePropertySource readProperties(Environment environment, String name) {
-      final var file = new File(environment.getProperty(SM_CONFIG_DIR), name + CONFIG_SUFFIX);
-      if (file.exists() && file.canRead()) {
-        try (var in = new FileInputStream(file);
-             var reader = new InputStreamReader(in, StandardCharsets.UTF_8)) {
-          return new IniFilePropertySource(name, new IniFileReader().read(reader), environment.getActiveProfiles());
-        } catch (IOException ex) {
-          LOG.error("Unable to read configuration file {}: {}", file, ex);
-        }
-      }
-      return null;
     }
   }
 }

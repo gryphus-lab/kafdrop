@@ -1,7 +1,7 @@
 FROM eclipse-temurin:25.0.4.1_1-jdk
 
-ADD kafdrop.sh /
-ADD maven/ /kafdrop/
+COPY kafdrop.sh /
+COPY maven/ /kafdrop/
 
 RUN chmod +x /kafdrop.sh
 

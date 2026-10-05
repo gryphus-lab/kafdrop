@@ -22,7 +22,7 @@ abstract class AbstractIntegrationTest {
     private static boolean isDockerAvailable() {
       try {
         return DockerClientFactory.instance().isDockerAvailable();
-      } catch (IllegalStateException ex) {
+      } catch (IllegalStateException _) {
         return false;
       }
     }

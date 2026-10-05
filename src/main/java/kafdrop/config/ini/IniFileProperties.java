@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.Map;
 
 public final class IniFileProperties {
-  private Map<String, Map<String, String>> sectionProperties = Maps.newLinkedHashMap();
-  private Map<String, String> defaultProperties = Maps.newLinkedHashMap();
+  private final Map<String, Map<String, String>> sectionProperties = Maps.newLinkedHashMap();
+  private final Map<String, String> defaultProperties = Maps.newLinkedHashMap();
 
   public Map<String, String> getDefaultProperties() {
     return defaultProperties;
