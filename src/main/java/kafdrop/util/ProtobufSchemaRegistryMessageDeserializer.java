@@ -1,5 +1,6 @@
 package kafdrop.util;
 
+import com.google.protobuf.Message;
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer;
 
@@ -9,7 +10,7 @@ import java.util.HashMap;
 public class ProtobufSchemaRegistryMessageDeserializer implements MessageDeserializer {
 
   private final String topicName;
-  private final KafkaProtobufDeserializer deserializer;
+  private final KafkaProtobufDeserializer<Message> deserializer;
 
   public ProtobufSchemaRegistryMessageDeserializer(String topicName, String schemaRegistryUrl,
                                                    String schemaRegistryAuth) {
@@ -17,7 +18,8 @@ public class ProtobufSchemaRegistryMessageDeserializer implements MessageDeseria
     this.deserializer = getDeserializer(schemaRegistryUrl, schemaRegistryAuth);
   }
 
-  private static KafkaProtobufDeserializer getDeserializer(String schemaRegistryUrl, String schemaRegistryAuth) {
+  private static KafkaProtobufDeserializer<Message> getDeserializer(String schemaRegistryUrl,
+                                                                     String schemaRegistryAuth) {
     final var config = new HashMap<String, Object>();
     config.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, schemaRegistryUrl);
     if (schemaRegistryAuth != null) {
