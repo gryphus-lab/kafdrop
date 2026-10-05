@@ -84,13 +84,13 @@
             </#if>
             <#list brokers as b>
                 <tr>
-                    <td><a href="<@spring.url '/broker/${b.id}'/>"><i class="fa fa-info-circle fa-lg"></i> ${b.id}</a></td>
-                    <td>${b.host?if_exists}</td>
-                    <td>${b.port?string}</td>
-                    <td><#if b.rack??>${b.rack}<#else>-</#if></td>
-                    <td><@template.yn b.controller/></td>
-                    <td>${(clusterSummary.getBrokerLeaderPartitionCount(b.id))!0}
-                        (${(clusterSummary.getBrokerLeaderPartitionRatio(b.id))?string.percent})
+                    <td><a href="<@spring.url '/broker/${b.id()}'/>"><i class="fa fa-info-circle fa-lg"></i> ${b.id()}</a></td>
+                    <td>${b.host()?if_exists}</td>
+                    <td>${b.port()?string}</td>
+                    <td><#if b.rack()??>${b.rack()}<#else>-</#if></td>
+                    <td><@template.yn b.controller()/></td>
+                    <td>${(clusterSummary.getBrokerLeaderPartitionCount(b.id()))!0}
+                        (${(clusterSummary.getBrokerLeaderPartitionRatio(b.id()))?string.percent})
                     </td>
                 </tr>
             </#list>

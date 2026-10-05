@@ -6,6 +6,7 @@ package kafdrop.protos;
 /**
  * Protobuf type {@code kafdrop.Person}
  */
+@javax.annotation.processing.Generated("protoc")
 public final class Person extends
   com.google.protobuf.GeneratedMessageV3 implements
   // @@protoc_insertion_point(message_implements:kafdrop.Person)
@@ -49,7 +50,7 @@ public final class Person extends
     name_ = "";
     email_ = "";
     contact_ = 0;
-    data_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    data_ = com.google.protobuf.LazyStringArrayList.emptyList();
   }
   private Person(
     com.google.protobuf.CodedInputStream input,
@@ -353,7 +354,6 @@ public final class Person extends
    */
   @java.lang.Override
   public kafdrop.protos.Person.Contact getContact() {
-    @SuppressWarnings("deprecation")
     kafdrop.protos.Person.Contact result = kafdrop.protos.Person.Contact.valueOf(contact_);
     return result == null ? kafdrop.protos.Person.Contact.UNRECOGNIZED : result;
   }
@@ -483,6 +483,7 @@ public final class Person extends
     return unknownFields.equals(other.unknownFields);
   }
 
+  @SuppressWarnings("unchecked")
   @java.lang.Override
   public int hashCode() {
     if (memoizedHashCode != 0) {
@@ -657,7 +658,7 @@ public final class Person extends
     private int id_;
     private java.lang.Object email_ = "";
     private int contact_ = 0;
-    private com.google.protobuf.LazyStringList data_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+    private com.google.protobuf.LazyStringList data_ = com.google.protobuf.LazyStringArrayList.emptyList();
 
     // Construct using kafdrop.protos.Person.newBuilder()
     private Builder() {
@@ -700,7 +701,7 @@ public final class Person extends
 
       contact_ = 0;
 
-      data_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      data_ = com.google.protobuf.LazyStringArrayList.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
@@ -728,7 +729,6 @@ public final class Person extends
     @java.lang.Override
     public kafdrop.protos.Person buildPartial() {
       kafdrop.protos.Person result = new kafdrop.protos.Person(this);
-      int from_bitField0_ = bitField0_;
       result.name_ = name_;
       result.id_ = id_;
       result.email_ = email_;
@@ -1078,7 +1078,6 @@ public final class Person extends
      */
     @java.lang.Override
     public kafdrop.protos.Person.Contact getContact() {
-      @SuppressWarnings("deprecation")
       kafdrop.protos.Person.Contact result = kafdrop.protos.Person.Contact.valueOf(contact_);
       return result == null ? kafdrop.protos.Person.Contact.UNRECOGNIZED : result;
     }
@@ -1214,7 +1213,7 @@ public final class Person extends
      * @return This builder for chaining.
      */
     public Builder clearData() {
-      data_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      data_ = com.google.protobuf.LazyStringArrayList.emptyList();
       bitField0_ = (bitField0_ & ~0x00000001);
       onChanged();
       return this;
@@ -1255,4 +1254,3 @@ public final class Person extends
   }
 
 }
-

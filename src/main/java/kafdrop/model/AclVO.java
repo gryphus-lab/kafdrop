@@ -23,6 +23,34 @@ import java.util.Objects;
 public record AclVO(String resourceType, String name, String patternType, String principal, String host,
                     String operation, String permissionType) implements Comparable<AclVO> {
 
+  public String getResourceType() {
+    return resourceType;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getPatternType() {
+    return patternType;
+  }
+
+  public String getPrincipal() {
+    return principal;
+  }
+
+  public String getHost() {
+    return host;
+  }
+
+  public String getOperation() {
+    return operation;
+  }
+
+  public String getPermissionType() {
+    return permissionType;
+  }
+
   @Override
   public int compareTo(AclVO that) {
     return this.name.compareTo(that.name);

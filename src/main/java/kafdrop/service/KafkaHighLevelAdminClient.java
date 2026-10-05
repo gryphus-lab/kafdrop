@@ -4,11 +4,15 @@ import jakarta.annotation.PostConstruct;
 import kafdrop.config.KafkaConfiguration;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DeleteTopicsOptions;
+import org.apache.kafka.clients.admin.GroupListing;
+import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsResult;
+import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsSpec;
+import org.apache.kafka.clients.admin.ListGroupsOptions;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.GroupType;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.acl.AccessControlEntryFilter;
@@ -33,6 +37,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,20 +77,49 @@ public final class KafkaHighLevelAdminClient {
   }
 
   Set<String> listConsumerGroups() {
-    final Collection<ConsumerGroupListing> groupListing;
+    final Collection<GroupListing> groupListing;
     try {
-      groupListing = adminClient.listConsumerGroups().valid().get();
+      ListGroupsOptions options = new ListGroupsOptions();
+      options.withTypes(Set.of(GroupType.CLASSIC, GroupType.CONSUMER, GroupType.STREAMS));
+
+      groupListing = adminClient.listGroups(options).valid().get();
     } catch (InterruptedException | ExecutionException e) {
       throw new KafkaAdminClientException(e);
     }
-    return groupListing.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toSet());
+    return groupListing.stream().map(GroupListing::groupId).collect(Collectors.toSet());
   }
 
   Map<TopicPartition, OffsetAndMetadata> listConsumerGroupOffsetsIfAuthorized(String groupId) {
     final var offsets = adminClient.listConsumerGroupOffsets(groupId);
+
+    return getGroupOffsets(offsets, groupId);
+  }
+
+  Map<String, Map<TopicPartition, OffsetAndMetadata>> listConsumerGroupOffsetsBatch(Set<String> groupIds) {
+    if (groupIds.isEmpty()) {
+      return Collections.emptyMap();
+    }
+
+    final var groupSpecs = groupIds.stream()
+      .collect(Collectors.toMap(Function.identity(), _ -> new ListConsumerGroupOffsetsSpec()));
+    final var result = adminClient.listConsumerGroupOffsets(groupSpecs);
+
+    final var offsetsByGroup = new HashMap<String, Map<TopicPartition, OffsetAndMetadata>>(groupIds.size(), 1f);
+    for (var groupId : groupIds) {
+      offsetsByGroup.put(groupId, getGroupOffsets(result, groupId));
+    }
+
+    return offsetsByGroup;
+  }
+
+  private Map<TopicPartition, OffsetAndMetadata> getGroupOffsets(ListConsumerGroupOffsetsResult result,
+                                                                 String groupId) {
     try {
-      return offsets.partitionsToOffsetAndMetadata().get();
-    } catch (InterruptedException | ExecutionException e) {
+      return result.partitionsToOffsetAndMetadata(groupId).get();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+      throw new KafkaAdminClientException(e);
+    } catch (ExecutionException e) {
       if (e.getCause() instanceof GroupAuthorizationException) {
         LOG.info("Not authorized to view consumer group {}; skipping", groupId);
         return Collections.emptyMap();
@@ -143,18 +177,23 @@ public final class KafkaHighLevelAdminClient {
    * @throws KafkaAdminClientException if computation threw an Exception
    */
   void deleteTopic(String topic) {
+    final var safeTopicName = sanitizeLogValue(topic);
     DeleteTopicsOptions options = new DeleteTopicsOptions();
     options.timeoutMs(5000); // timeout after 5 seconds
     final var deleteTopicsResult = adminClient.deleteTopics(List.of(topic), options);
     try {
       deleteTopicsResult.all().get();
       if (LOG.isInfoEnabled()) {
-        LOG.info("Topic {} successfully deleted", topic);
+        LOG.info("Topic {} successfully deleted", safeTopicName);
       }
     } catch (InterruptedException | ExecutionException e) {
-      LOG.error("Error while deleting topic", e);
+      LOG.error("Error while deleting topic {}", safeTopicName, e);
       throw new KafkaAdminClientException(e);
     }
+  }
+
+  private static String sanitizeLogValue(String value) {
+    return value == null ? "<null>" : value.replaceAll("[\\r\\n]", "_");
   }
 
   Collection<AclBinding> listAcls() {
