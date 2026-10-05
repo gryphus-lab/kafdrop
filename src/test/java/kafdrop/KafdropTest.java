@@ -7,6 +7,10 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRe
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,8 +39,10 @@ class KafdropTest extends AbstractIntegrationTest {
 
   @Test
   void getReturnsExpectedGutHubStarText() {
-    ResponseEntity<String> responseEntity = restTemplate
-      .getForEntity("http://localhost:" + port + "/", String.class);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setAccept(java.util.List.of(MediaType.TEXT_HTML));
+    ResponseEntity<String> responseEntity = restTemplate.exchange(
+      "http://localhost:" + port + "/", HttpMethod.GET, new HttpEntity<>(headers), String.class);
     assertEquals(OK, responseEntity.getStatusCode());
     assertThat(responseEntity.getBody()).contains("Star Kafdrop on GitHub");
   }

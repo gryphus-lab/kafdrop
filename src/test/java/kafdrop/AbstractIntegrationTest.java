@@ -6,7 +6,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.DockerClientFactory;
-import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.kafka.ConfluentKafkaContainer;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
 
@@ -17,7 +17,8 @@ import java.util.Map;
 @ContextConfiguration(initializers = AbstractIntegrationTest.Initializer.class)
 abstract class AbstractIntegrationTest {
   static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-    static KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka").withTag("7.7.7"));
+    static ConfluentKafkaContainer kafka =
+      new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka").withTag("7.7.7"));
 
     private static boolean isDockerAvailable() {
       try {
